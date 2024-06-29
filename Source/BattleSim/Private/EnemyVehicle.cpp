@@ -1,0 +1,36 @@
+
+
+#include "EnemyVehicle.h"
+
+void AEnemyVehicle::BeginPlay()
+{
+	Super::BeginPlay();
+	setTextColor(FLinearColor(1.0f, 1.0f, 0.0f, 1.0f));
+}
+
+AEnemyVehicle::AEnemyVehicle() :AVehicle()
+{
+	status = ALIVE;
+}
+
+void AEnemyVehicle::setStatus(VehicleStatus newStatus)
+{
+	status = newStatus;
+	if (status == DEAD)
+	{
+		//set invisible
+		SetActorHiddenInGame(true);
+	}
+}
+
+void AEnemyVehicle::setInfo(std::string info) 
+{
+	//add * to the text if status == targeted
+	if (status == TARGETED)
+	{
+		info = "*" + info + "*";
+		//set color to red
+		setTextColor(FLinearColor(1.0f, 0.0f, 0.0f, 1.0f));
+	}
+	AVehicle::setInfo(info);
+}
