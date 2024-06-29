@@ -83,7 +83,19 @@ void UEController::update()
 			}
 			enemyVehicleList[i]->id = target.getId();
 		}
-		
+		if (target.getDeath())
+		{
+			enemyVehicleList[i]->setStatus(DEAD);
+		}
+		else if (target.markedKilled)
+		{
+			enemyVehicleList[i]->setStatus(TARGETED);
+			//delay and set status to DEAD
+			FTimerHandle TimerHandle;
+			world->GetTimerManager().SetTimer(TimerHandle, [this, i]() {
+				enemyVehicleList[i]->setStatus(DEAD);
+				}, 3.0f, false);
+		}
 		Position pos = target.getPosition();
 		double verticalAngle = target.getVerticalAngle();
 		double horizontalAngle = target.getHorizontalAngle();

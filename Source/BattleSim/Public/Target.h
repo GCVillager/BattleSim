@@ -37,8 +37,6 @@ private:
 
 	double score; // 优先等级
 
-	bool markedDeath; // 标记死亡
-
 	double timeCount; // 内部计时系统,当发生更新后状态归0
 
 	
@@ -47,8 +45,8 @@ private:
 	OurUnit* unit; // 我方单位
 
 public:
-
 	int centerIndex; // 对应的聚类中心索引
+	bool markedDeath; // 标记死亡
 	bool markedKilled; // 标记被打击
 	double weights[7]; // 七个权重数值
 
