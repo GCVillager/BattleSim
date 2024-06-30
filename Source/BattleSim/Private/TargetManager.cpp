@@ -311,7 +311,7 @@ void TargetManager::initialTarget(int quantity) {
 
 		if (type == TYPE::PLANE) {
 			int tmp = dist_pos(gen);
-			position.z = tmp % 10 + 10;
+			position.z = tmp % 10 + 30;
 		}
 
 		velocity = (status == STATUS::FIGHT) ? dist_velocity(gen) : 0;
