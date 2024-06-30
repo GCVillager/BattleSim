@@ -214,7 +214,7 @@ double TargetManager::setVerticalRotation(Position position, double horizontal_r
 	else {
 		z2 = map[x + 1][y + 1];
 	}
-	return atan2(z2 - z1, 1);
+	return utils::transformToAngle180(atan2(z2 - z1, 1));
 }
 
 void TargetManager::setRotation() {
@@ -280,6 +280,7 @@ void TargetManager::initialTarget(int quantity) {
 	std::uniform_int_distribution<int> dist_status(1, 3);
 	std::uniform_real_distribution<double> dist_threat(0, 100);
 	std::uniform_real_distribution<double> dist_jamming(0, 100);
+	std::uniform_real_distribution<double> dist_horizontal(0, 365);
 
 
 	for (int i = 0; i < quantity; i++) {
@@ -319,6 +320,8 @@ void TargetManager::initialTarget(int quantity) {
 		jamming1 = dist_jamming(gen);
 		jamming2 = dist_jamming(gen);
 		Target tmp(i, type, position, velocity, status, threat_distance, jamming1, jamming2, this->unit);
+
+		tmp.setHorizontalAngle(dist_horizontal(gen));
 		TargetList.push_back(tmp);
 
 	}
