@@ -76,12 +76,6 @@ void AGenLandscape::GenerateTerrain()
 	TerrainMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UVs, TArray<FColor>(), TArray<FProcMeshTangent>(), true);
 }
 
-float AGenLandscape::PerlinNoise2D(float X, float Y) const
-{
-	float NoiseScale = 0.04f;
-	return FMath::PerlinNoise2D(FVector2D(X * NoiseScale, Y * NoiseScale));
-}
-
 
 AGenLandscape::~AGenLandscape()
 {

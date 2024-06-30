@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "ProceduralMeshComponent.h"
+#include "CoreUtils.h"
 #include "GenLandscape.generated.h"
 
 
@@ -42,7 +43,7 @@ protected:
 	float HeightScale = 300.0f;
 
 	void GenerateTerrain();
-	float PerlinNoise2D(float X, float Y) const;
+	//float PerlinNoise2D(float X, float Y) const;
 public:	
 
 	double(*map)[500];

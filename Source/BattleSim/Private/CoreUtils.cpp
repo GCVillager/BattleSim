@@ -60,3 +60,10 @@ double utils::transformToRadianPI(double angle) {
 	angle = utils::normalizeAngle180(angle);
 	return angle * PI / 180;
 }
+
+float PerlinNoise2D(float X, float Y)
+{
+	float NoiseScale = 0.024f;
+	//float NoiseScale = 0.005f;
+	return FMath::PerlinNoise2D(FVector2D(X * NoiseScale, Y * NoiseScale));
+}

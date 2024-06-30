@@ -3,6 +3,8 @@
 #define or ||
 #pragma warning(disable: 4458)
 
+#include "CoreMinimal.h"
+
 enum TYPE {
 	PLANE,
 	TANK,
@@ -69,4 +71,6 @@ namespace utils {
 	* @return 返回相应的弧度[-PI,PI]
 	*/
 	double transformToRadianPI(double Angle);
+
+	float PerlinNoise2D(float X, float Y);
 }
