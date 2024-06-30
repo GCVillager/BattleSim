@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "UEController.h"
+#include "MyPlayerController.h"
 #include "BattleSimGameModeBase.generated.h"
 
 /**

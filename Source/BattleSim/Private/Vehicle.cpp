@@ -19,7 +19,7 @@ AVehicle::AVehicle()
 	if (WidgetClass.Succeeded())
 	{
 		infoWidgetComponent->SetWidgetClass(WidgetClass.Class);
-		infoWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
+		infoWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
 	}
 }
 

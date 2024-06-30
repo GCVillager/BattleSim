@@ -8,11 +8,7 @@ ABattleSimGameModeBase::ABattleSimGameModeBase()
 	gameController = new UEController();
 	PrimaryActorTick.bCanEverTick = true;
 	//set player controller
-	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Script/Engine.Blueprint'/Game/BP_PlayerController.BP_PlayerController_C'"));
-	if (PlayerControllerBPClass.Class != NULL)
-	{
-		PlayerControllerClass = PlayerControllerBPClass.Class;
-	}
+	PlayerControllerClass = AMyPlayerController::StaticClass();
 }
 
 void ABattleSimGameModeBase::BeginPlay()
