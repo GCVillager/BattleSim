@@ -71,20 +71,23 @@ void Target::loop(double dTime) {
 		std::uniform_int<int> dist_int(1, 10);
 		int tmp = dist_int(gen);
 		if (tmp == 5) {
-			std::uniform_int_distribution<int> dist_status(1, 3);
+			std::uniform_int_distribution<int> dist_status(1, 5);
 			std::uniform_real_distribution<double> dist_velocity(0, 5);
 			tmp = dist_status(gen);
-			if (tmp == 1) {
+			if (tmp <= 3) {
 				status = FIGHT;
 				velocity = dist_velocity(gen);
 			}
-			else if (tmp == 2) {
+			else if (tmp == 4) {
 				status = STANDBY;
 				velocity = 0;
 			}
-			else if (tmp == 3) {
+			else if (tmp == 5) {
 				status = RESTING;
 				velocity = 0;
+			}
+			if (this->type == PLANE) {
+				velocity = dist_velocity(gen);
 			}
 			timeCount = 0;
 		}
@@ -103,14 +106,14 @@ double Target::getScore(double weight[7]) {
 }
 
 double Target::getWeightDifference(double weight[7]) const {
-	double result=0;
+	double result = 0;
 	for (int i = 0; i < 7; i++) {
 		result += pow(weight[i] - this->weights[i], 2);
 	}
 	return sqrt(result);
 }
 
-double Target::getWeightDifference(double weightA[7],double weightB[7]) {
+double Target::getWeightDifference(double weightA[7], double weightB[7]) {
 	double result = 0;
 	for (int i = 0; i < 7; i++) {
 		result += pow(weightA[i] - weightB[i], 2);
@@ -180,6 +183,13 @@ double Target::getVerticalAngle() const {
 	return this->verticalAngle;
 }
 
+double Target::getSideAngle() {
+	return this->sideAngle;
+}
+void Target::setSideAngle(double sideAngle) {
+	this->sideAngle = sideAngle;
+}
+
 void Target::setId(int id) {
 	this->id = id;
 }
@@ -224,8 +234,8 @@ void Target::setVerticalAngle(double vertical_angle) {
 	this->verticalAngle = vertical_angle;
 }
 
-void Target::forward(double dTime){
-	this->position = this->position.forwardXYZ(this->horizontalAngle, this->verticalAngle, this->velocity * dTime);
+void Target::forward(double dTime) {
+	this->position = this->position.forwardXYZ(this->horizontalAngle + 90, this->verticalAngle, this->velocity * dTime);// 0度指向的是右边,需要加90度
 }
 
 bool Target::getDeath() const {

@@ -37,16 +37,20 @@ private:
 
 	double score; // 优先等级
 
+	bool markedDeath; // 标记死亡
+
 	double timeCount; // 内部计时系统,当发生更新后状态归0
 
-	
+
 	int level; // 第几聚类
 
 	OurUnit* unit; // 我方单位
 
+	double sideAngle; // 侧边角度,以玩家的右侧为基准,-90向下翻倒,,90向上翻倒,0°水平
+
 public:
+
 	int centerIndex; // 对应的聚类中心索引
-	bool markedDeath; // 标记死亡
 	bool markedKilled; // 标记被打击
 	double weights[7]; // 七个权重数值
 
@@ -59,6 +63,9 @@ public:
 	* @param - dTime 距离上一帧的时间
 	*/
 	void loop(double dTime);
+	double getSideAngle(); // 获取侧边角度
+	void setSideAngle(double sideAngle); // 设定侧边角度
+
 	static double getWeightDifference(double weightA[7], double weightB[7]);
 	/*
 	* 获取目标类的id

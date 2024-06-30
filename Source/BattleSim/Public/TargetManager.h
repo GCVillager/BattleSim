@@ -14,7 +14,7 @@ private:
 	OurUnit* unit;
 	std::vector<Target> TargetList;
 
-	
+
 public:
 	TargetManager();
 	OurUnit* getUnit();
@@ -54,6 +54,11 @@ public:
 	* 执行每个元素的loop函数
 	*/
 	void executeLoop(double dTime);
+
+	/*
+	* 为每个元素赋值侧边角度
+	*/
+	void setSideAngle();
 
 	~TargetManager()
 	{
