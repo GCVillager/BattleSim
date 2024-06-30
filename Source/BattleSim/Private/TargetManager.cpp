@@ -20,6 +20,7 @@ void TargetManager::setSideAngle() {
 
 	for (int i = 0; i < TargetList.size(); i++) {
 		if (TargetList[i].getDeath())continue;
+		if (TargetList[i].getType() == PLANE) continue;
 		position = TargetList[i].getPosition();
 		horizontalAngle = unit->getHorizontalAngle();
 		TargetList[i].setSideAngle(setVerticalRotation(position, horizontalAngle));
@@ -55,8 +56,10 @@ void TargetManager::ready() {
 		for (double j : TargetList.at(rand() % TargetList.size()).weights)
 			clusters[i].push_back(j);
 
-	setRotation(); // 设定每个单位的竖直朝向
+	
 	correctPosition();
+	setRotation(); // 设定每个单位的竖直朝向
+	setSideAngle(); // 设定每个单位的侧边朝向
 }
 bool cmp(const Target& a, const Target& b) {
 	return a.getScore() > b.getScore();
@@ -78,7 +81,6 @@ void TargetManager::loop(double dTime) {
 			if (TargetList[i].getDeath() or TargetList[i].markedKilled)continue;
 			TargetList[i].markedKilled = true;
 			break;
-
 		}
 		unit->canKillTarget = false;
 	}
@@ -181,41 +183,58 @@ void TargetManager::runKMean() {
 
 }
 
-
+PRAGMA_DISABLE_OPTIMIZATION
 double TargetManager::setVerticalRotation(Position position, double horizontal_rotation) {
 	int x = position.x;
 	int y = position.y;
 
 
-	double z1 = position.z; // 获取当前坐标的高度(km)
-	double z2;
+	double z1 = utils::PerlinNoise2D(x,y); // 获取当前自己坐标的高度(km)
+	float z2 = 0;
+	double delta__ = 0.01;
+	bool tmp = false;
+	Position tmp_p(x, y);
+	tmp_p=tmp_p.forwardXY(horizontal_rotation, delta__);
+	/*
 	if (0 <= horizontal_rotation and horizontal_rotation <= 18.435 or horizontal_rotation >= 341.565 and horizontal_rotation <= 360) {
-		z2 = map[x + 1][y];
+		z2 = utils::PerlinNoise2D(x + delta__, y);
 	}
 	else if (horizontal_rotation > 18.435 and horizontal_rotation <= 71.565) {
-		z2 = map[x + 1][y + 1];
+		tmp = true;
+		z2 = utils::PerlinNoise2D(x + delta__, y + delta__);
 	}
 	else if (horizontal_rotation > 71.565 and horizontal_rotation <= 108.435) {
-		z2 = map[x][y + 1];
+		z2 = utils::PerlinNoise2D(x, y + delta__);
 	}
 	else if (horizontal_rotation > 108.435 and horizontal_rotation <= 161.565) {
-		z2 = map[x - 1][y + 1];
+		tmp = true;
+		z2 = utils::PerlinNoise2D(x - delta__, y+ delta__);
 	}
 	else if (horizontal_rotation > 161.565 and horizontal_rotation <= 198.435) {
-		z2 = map[x - 1][y];
+		z2 = utils::PerlinNoise2D(x - delta__, y);
 	}
 	else if (horizontal_rotation > 198.435 and horizontal_rotation <= 251.565) {
-		z2 = map[x - 1][y - 1];
+		tmp = true;
+		z2 = utils::PerlinNoise2D(x - delta__, y - delta__);
 
 	}
 	else if (horizontal_rotation > 251.565 and horizontal_rotation <= 288.435) {
-		z2 = map[x][y - 1];
+		z2 = utils::PerlinNoise2D(x, y - delta__);
 	}
 	else {
-		z2 = map[x + 1][y + 1];
+		tmp = true;
+		z2 = utils::PerlinNoise2D(x + delta__, y + delta__);
 	}
-	return utils::transformToAngle180(atan2(z2 - z1, 1));
+	double deltaZ = z2 - z1;
+	double deltaX = (tmp == true) ? delta__ * pow(2, 0.5) : delta__;
+	
+	
+	return utils::transformToAngle180(atan2(deltaZ, deltaX));
+	*/
+	double deltaZ = utils::PerlinNoise2D(tmp_p.x,tmp_p.y)- z1;
+	return utils::transformToAngle180(atan2(deltaZ*300/15, delta__));
 }
+PRAGMA_ENABLE_OPTIMIZATION
 
 void TargetManager::setRotation() {
 
@@ -258,7 +277,7 @@ void TargetManager::initialMap(double map[500][500]) {
 
 	for (int i = 0; i < 500; i++) {
 		for (int j = 0; j < 500; j++) {
-			this->map[i][j] = map[i][j] / 15;
+			this->map[i][j] = map[i][j]/15;
 		}
 	}
 }
@@ -316,12 +335,17 @@ void TargetManager::initialTarget(int quantity) {
 		}
 
 		velocity = (status == STATUS::FIGHT) ? dist_velocity(gen) : 0;
+		velocity += (type == PLANE) ? 10 : 0;
 		threat_distance = dist_threat(gen);
 		jamming1 = dist_jamming(gen);
 		jamming2 = dist_jamming(gen);
 		Target tmp(i, type, position, velocity, status, threat_distance, jamming1, jamming2, this->unit);
 
 		tmp.setHorizontalAngle(dist_horizontal(gen));
+		if (type == TYPE::PLANE) {
+			tmp.setVerticalAngle(0);
+			tmp.setSideAngle(0);
+		}
 		TargetList.push_back(tmp);
 
 	}
@@ -400,9 +424,16 @@ void TargetManager::checkTransgression() {
 
 void TargetManager::executeLoop(double dTime) {
 	unit->loop(dTime);
+	Position position = unit->getPosition();
+	position.z = utils::PerlinNoise2D(position.x, position.y) * 300 / 15;
+	unit->setPosition(position);
 	if (this->TargetList.empty())return;
 	for (auto it = TargetList.begin(); it < TargetList.end(); it++) {
 		it->loop(dTime);
+		if (it->getType() == PLANE) continue;
+		position = it->getPosition();
+		position.z = utils::PerlinNoise2D(position.x, position.y) * 300 / 15;
+		it->setPosition(position);
 	}
 }
 
