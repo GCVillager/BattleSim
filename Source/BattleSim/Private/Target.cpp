@@ -49,8 +49,8 @@ void Target::loop(double dTime) {
 	// 根据威胁距离判定
 	weights[3] = (threatDistance >= distance) ? 300 : 100;
 	// 根据距离我方的方位判定
-	horizontalAngle = unit->getPosition().getHorizontalAngle(this->position);
-	if (horizontalAngle >= 45 and horizontalAngle <= 135 or horizontalAngle >= 225 and horizontalAngle <= 315) {
+	angleToOurUnit = unit->getPosition().getHorizontalAngle(this->position);
+	if (angleToOurUnit >= 45 and angleToOurUnit <= 135 or angleToOurUnit >= 225 and angleToOurUnit <= 315) {
 		weights[4] = 300;
 	}
 	else {
