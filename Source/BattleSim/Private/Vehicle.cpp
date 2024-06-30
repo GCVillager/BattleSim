@@ -21,17 +21,13 @@ AVehicle::AVehicle()
 		infoWidgetComponent->SetWidgetClass(WidgetClass.Class);
 		infoWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
 	}
-	// 取消阴影
-	UTextBlock* textBlock = Cast<UTextBlock>(infoWidgetComponent->GetUserWidgetObject()->GetWidgetFromName(FName("TextBlock_EnemyInfo")));
-	textBlock->SetShadowOffset(FVector2D::ZeroVector); // 设置阴影偏移为0
-	textBlock->SetShadowColorAndOpacity(FLinearColor::Transparent); // 设置阴影颜色为透明
 }
 
 // Called when the game starts or when spawned
 void AVehicle::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	FTimerHandle TimerHandle;
 }
 
 // Called every frame

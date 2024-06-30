@@ -16,7 +16,8 @@ class BATTLESIM_API ABattleSimGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 private:
-	UEController gameController;
+	UEController* gameController;
+	~ABattleSimGameModeBase();
 public:
 	virtual void BeginPlay() override;
 	ABattleSimGameModeBase();

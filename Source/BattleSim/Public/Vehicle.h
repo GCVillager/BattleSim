@@ -43,6 +43,7 @@ protected:
 	UWidgetComponent* infoWidgetComponent;
 
 	void setTextColor(FLinearColor color);
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

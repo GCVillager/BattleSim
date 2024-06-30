@@ -3,19 +3,36 @@
 
 const int TILE_SIZE = 15;
 
+int gameRound = 0;
+
 #include "UEController.h"
 
 #include <algorithm>
 
-float round(float x,int n)
+
+std::string round(float x,int n)
 {
-	//保留n位小数
-	return floor(x * pow(10, n) + 0.5) / pow(10, n);
+	std::string tmp = std::to_string(x);
+	int pos = tmp.find('.');
+	if (pos == -1)
+	{
+		tmp += ".";
+		for (int i = 0; i < n; i++)
+			tmp += "0";
+		return tmp;
+	}
+	else if (tmp.size() - pos - 1 < n)
+	{
+		for (int i = 0; i < n - (tmp.size() - pos - 1); i++)
+			tmp += "0";
+		return tmp;
+	}
+	return tmp.substr(0, pos + n + 1);
 }
 
 UEController::UEController()
 {
-
+	gameRound++;
 }
 
 UEController::~UEController()
@@ -35,7 +52,7 @@ void UEController::BeginPlay()
 	targetManager->ready();
 	playerVehicle = world->SpawnActor<APlayerVehicle>(APlayerVehicle::StaticClass());
 	playerVehicle->id = 0;
-	playerVehicle->setInfo("我方单位");
+	playerVehicle->setInfo("Our Unit");
 	update();
 }
 
@@ -92,7 +109,10 @@ void UEController::update()
 			enemyVehicleList[i]->setStatus(TARGETED);
 			//delay and set status to DEAD
 			FTimerHandle TimerHandle;
-			world->GetTimerManager().SetTimer(TimerHandle, [this, i]() {
+			int currentRound = gameRound;
+			world->GetTimerManager().SetTimer(TimerHandle, [this, i,currentRound]() {
+				if (gameRound != currentRound)
+					return;
 				enemyVehicleList[i]->setStatus(DEAD);
 				}, 3.0f, false);
 		}
@@ -108,7 +128,7 @@ void UEController::update()
 		//将坐标和旋转角度赋值给enemyVehicleList[i]
 		enemyVehicleList[i]->SetActorLocationAndRotation(location, rotator);
 		enemyVehicleList[i]->updateWidget();
-		enemyVehicleList[i]->setInfo(std::to_string(target.getLevel())+":"+std::to_string(round(target.getScore(),2)));
+		enemyVehicleList[i]->setInfo(std::to_string(target.getLevel())+":"+round(target.getScore(),2));
 	}
 }
 
