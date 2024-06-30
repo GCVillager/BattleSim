@@ -8,7 +8,7 @@ AEnemyCar::AEnemyCar() :AEnemyVehicle()
 	//set up the mesh
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/Models/EnemyCar.EnemyCar'"));
 
-	float scale = 0.4f;
+	float scale = 0.55f;
 	MeshComponent->SetRelativeScale3D(FVector(scale, scale, scale));
 
 	if (MeshAsset.Succeeded())
