@@ -27,7 +27,13 @@ public:
     // Widget类的引用
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "UI")
 	UUserWidget* PauseMenuInstance;
-	void BeginPlay() override;
     TSubclassOf<UUserWidget> PauseMenuClass;
+
+	void BeginPlay() override;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD")
+    TSubclassOf<UUserWidget> HUDWidgetClass;
+    UUserWidget* HUDWidget;
+
     AMyPlayerController();
 };
