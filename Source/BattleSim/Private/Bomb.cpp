@@ -8,7 +8,7 @@ ABomb::ABomb()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	BombMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BombMesh"));
 	RootComponent = BombMesh;
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> BombMeshAsset(TEXT("/Script/Engine.StaticMesh'/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere'"));
