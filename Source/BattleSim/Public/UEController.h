@@ -10,6 +10,7 @@
 #include "TargetManager.h"
 #include "GenLandscape.h"
 #include "Engine/World.h"
+#include "Bomb.h"
 
 /**
  * @brief 用于控制游戏中的所有载具，并且与计算各个载具的状态的模块进行交互
@@ -24,7 +25,6 @@ private:
 
 	TArray<AEnemyVehicle*> enemyVehicleList;
 public:
-	UEController();
 	void setWorld(UWorld* world);
 	void update();
 

@@ -45,7 +45,7 @@ void AGenLandscape::GenerateTerrain()
 		for (int32 X = 0; X < GridSize; X++)
 		{
 			//generate height,use perlin noise
-			float Height = PerlinNoise2D(X, Y) * HeightScale;
+			float Height = utils::PerlinNoise2D(X, Y) * HeightScale;
 			//
 			Vertices.Add(FVector(X * TileSize, Y * TileSize, Height));
 			Normals.Add(FVector(0, 0, 1));

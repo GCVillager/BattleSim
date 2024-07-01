@@ -23,7 +23,9 @@ protected:
 public:
 	AEnemyVehicle();
 	void setStatus(VehicleStatus newStatus);
+	VehicleStatus getStatus();
 	void BeginPlay() override;
 	virtual void setInfo(std::string info);
+	void destroy();
 };
 
