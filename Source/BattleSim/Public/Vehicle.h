@@ -16,7 +16,7 @@
 
 enum VehicleStatus
 {
-	ALIVE, TARGETED, DEAD,
+	ALIVE, TARGETED, DEAD
 };
 
 /**

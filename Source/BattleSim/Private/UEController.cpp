@@ -3,8 +3,6 @@
 
 const int TILE_SIZE = 15;
 
-int gameRound = 0;
-
 #include "UEController.h"
 
 #include <algorithm>
@@ -30,10 +28,6 @@ std::string round(float x,int n)
 	return tmp.substr(0, pos + n + 1);
 }
 
-UEController::UEController()
-{
-	gameRound++;
-}
 
 UEController::~UEController()
 {
@@ -105,17 +99,11 @@ void UEController::update()
 		{
 			enemyVehicleList[i]->setStatus(DEAD);
 		}
-		else if (target.markedKilled)
+		else if (target.markedKilled && enemyVehicleList[i]->getStatus() != TARGETED)
 		{
 			enemyVehicleList[i]->setStatus(TARGETED);
-			//delay and set status to DEAD
-			FTimerHandle TimerHandle;
-			int currentRound = gameRound;
-			world->GetTimerManager().SetTimer(TimerHandle, [this, i,currentRound]() {
-				if (gameRound != currentRound)
-					return;
-				enemyVehicleList[i]->setStatus(DEAD);
-				}, 3.0f, false);
+			ABomb* bomb = world->SpawnActor<ABomb>(ABomb::StaticClass());
+			bomb->init(playerVehicle, enemyVehicleList[i]);
 		}
 		Position pos = target.getPosition();
 		double verticalAngle = target.getVerticalAngle();
