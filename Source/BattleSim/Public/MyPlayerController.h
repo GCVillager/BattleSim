@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "PlayerVehicle.h"
+#include "Kismet/GameplayStatics.h"
 #include "MyPlayerController.generated.h"
 
 /**
@@ -13,7 +15,7 @@ UCLASS()
 class BATTLESIM_API AMyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
 protected:
     virtual void SetupInputComponent() override;
 

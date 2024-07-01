@@ -43,7 +43,30 @@ void AMyPlayerController::BeginPlay()
 	bShowMouseCursor = false;
 }
 
+PRAGMA_DISABLE_OPTIMIZATION
+
 void AMyPlayerController::OnFocusPressed()
 {
-
+	//get pawn
+	APawn* MyPawn = GetPawn();
+	TArray<AActor*> playerVehicles;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerVehicle::StaticClass(), playerVehicles);
+	APlayerVehicle* player = Cast<APlayerVehicle>(playerVehicles[0]);
+	FVector vehiclePos = player->GetActorLocation();
+	FRotator vehicleRot = player->GetActorRotation();
+	const float distance = 1000.0f;
+	float yaw =  vehicleRot.Yaw;
+	float dx = distance * FMath::Cos(FMath::DegreesToRadians(yaw));
+	float dy = distance * FMath::Sin(FMath::DegreesToRadians(yaw));
+	FVector newLocation = vehiclePos + FVector(-dx, -dy, 500);
+	MyPawn->SetActorLocation(newLocation);
+	AMyPlayerController* controller = Cast<AMyPlayerController>(MyPawn->GetController());
+	if (controller)
+	{
+		controller->SetControlRotation(FRotator(FMath::RadiansToDegrees(FMath::Tan(-50.0 / 100.0)), yaw, 0));
+		//set location
+	}
+	//MyPawn->SetActorRotation(FRotator(FMath::Tan(-50.0 / 100.0), -yaw, 0));
 }
+
+PRAGMA_ENABLE_OPTIMIZATION
