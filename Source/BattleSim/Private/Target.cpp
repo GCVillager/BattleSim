@@ -72,21 +72,21 @@ void Target::loop(double dTime) {
 		}
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_int<int> dist_int(1, 10);
+		std::uniform_int<int> dist_int(1, 5);
 		int tmp = dist_int(gen);
-		if (tmp == 5) {
-			std::uniform_int_distribution<int> dist_status(1, 5);
-			std::uniform_real_distribution<double> dist_velocity(0, 5);
+		if (tmp == 4) {
+			std::uniform_int_distribution<int> dist_status(1, 8);
+			std::uniform_real_distribution<double> dist_velocity(5, 10);
 			tmp = dist_status(gen);
-			if (tmp <= 3) {
+			if (tmp <= 6) {
 				status = FIGHT;
 				velocity = dist_velocity(gen);
 			}
-			else if (tmp == 4) {
+			else if (tmp == 7) {
 				status = STANDBY;
 				velocity = 0;
 			}
-			else if (tmp == 5) {
+			else if (tmp == 8) {
 				status = RESTING;
 				velocity = 0;
 			}
