@@ -9,7 +9,12 @@ ABattleSimGameModeBase::ABattleSimGameModeBase()
 	PrimaryActorTick.bCanEverTick = true;
 	//set player controller
 	PlayerControllerClass = AMyPlayerController::StaticClass();
+
+
+	
 }
+
+PRAGMA_DISABLE_OPTIMIZATION
 
 void ABattleSimGameModeBase::BeginPlay()
 {
@@ -17,6 +22,8 @@ void ABattleSimGameModeBase::BeginPlay()
 	gameController->setWorld(GetWorld());
 	gameController->BeginPlay();
 }
+
+PRAGMA_ENABLE_OPTIMIZATION
 
 void ABattleSimGameModeBase::Tick(float DeltaTime)
 {
