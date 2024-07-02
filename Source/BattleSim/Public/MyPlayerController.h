@@ -22,7 +22,7 @@ protected:
     // 定义处理特定键盘事件的函数
     void OnEscapePressed();
     void OnFocusPressed();
-
+	void OnGlobalPressed();
 public:
     // Widget类的引用
     UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "UI")
