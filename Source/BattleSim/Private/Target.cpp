@@ -66,6 +66,10 @@ void Target::loop(double dTime) {
 
 	if (timeCount > 20) {
 		// 超过20s时,随机更新状态
+		if (type == PLANE) {
+			timeCount = 0;
+			return;
+		}
 		std::random_device rd;
 		std::mt19937 gen(rd());
 		std::uniform_int<int> dist_int(1, 10);
@@ -85,9 +89,6 @@ void Target::loop(double dTime) {
 			else if (tmp == 5) {
 				status = RESTING;
 				velocity = 0;
-			}
-			if (this->type == PLANE) {
-				velocity = dist_velocity(gen);
 			}
 			timeCount = 0;
 		}
