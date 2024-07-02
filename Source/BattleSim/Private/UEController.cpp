@@ -63,11 +63,7 @@ void UEController::update()
 	if (verticalAngle < 0)
 		verticalAngle = 360 + verticalAngle;
 	//将二元的旋转角度转换为FRotator
-<<<<<<< HEAD
-	FRotator rotator = FRotator(verticalAngle, horizontalAngle+90, sideAngle);
-=======
 	FRotator rotator = FRotator(verticalAngle, horizontalAngle+90,sideAngle);
->>>>>>> 73d841ba0082cbc270d8ba547a5ea929e1ba5352
 	//将坐标转换为FVector
 	FVector location = FVector(pos.x*TILE_SIZE, pos.y*TILE_SIZE, pos.z*TILE_SIZE);
 	//将坐标和旋转角度赋值给playerVehicle
