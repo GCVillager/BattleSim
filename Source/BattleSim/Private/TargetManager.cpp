@@ -59,7 +59,7 @@ void TargetManager::ready() {
 	
 	correctPosition();
 	setRotation(); // 设定每个单位的竖直朝向
-	//setSideAngle(); // 设定每个单位的侧边朝向
+	setSideAngle(); // 设定每个单位的侧边朝向
 }
 bool cmp(const Target& a, const Target& b) {
 	return a.getScore() > b.getScore();
@@ -67,7 +67,7 @@ bool cmp(const Target& a, const Target& b) {
 
 void TargetManager::loop(double dTime) {
 	setRotation(); // 设定每个单位的竖直朝向
-	//setSideAngle(); // 设定每个单位的侧边朝向
+	setSideAngle(); // 设定每个单位的侧边朝向
 	executeLoop(dTime);// 执行每个单位的循环(行进,计算各自的模)
 
 	checkTransgression(); // 检查每个元素是否越界,敌方越界清除,我方则重新设置角度和位置
@@ -190,12 +190,13 @@ double TargetManager::setVerticalRotation(Position position, double horizontal_r
 
 
 	double z1 = utils::PerlinNoise2D(x,y); // 获取当前自己坐标的高度(km)
-	float z2 = 0;
+	double z2 = 0;
 	double delta__ = 0.01;
-	bool tmp = false;
+
 	Position tmp_p(x, y);
 	tmp_p=tmp_p.forwardXY(horizontal_rotation, delta__);
 	/*
+	bool tmp = false;
 	if (0 <= horizontal_rotation and horizontal_rotation <= 18.435 or horizontal_rotation >= 341.565 and horizontal_rotation <= 360) {
 		z2 = utils::PerlinNoise2D(x + delta__, y);
 	}
@@ -240,15 +241,15 @@ void TargetManager::setRotation() {
 
 	Position position = unit->getPosition(); // 获取我方单位的坐标
 	double horizontal_rotation = unit->getHorizontalAngle(); // 获取水平朝向
-	double vertical_angle = -setVerticalRotation(position, horizontal_rotation + 90); // 注意,朝向0°为右侧开始,所以需要加90度更正为前方
+	double vertical_angle = setVerticalRotation(position, horizontal_rotation + 90); // 注意,朝向0°为右侧开始,所以需要加90度更正为前方
 	unit->setVerticaAngle(vertical_angle);
 	if (TargetList.empty()) return;
 	for (auto it = TargetList.begin(); it < TargetList.end(); it++) {
 		if (it->getDeath()) continue;
 		if (it->getType() == PLANE) continue; // 飞机不需要改变垂直方向
 		position = it->getPosition();
-		horizontal_rotation = -it->getHorizontalAngle();
-		it->setVerticalAngle(setVerticalRotation(position, horizontal_rotation));
+		horizontal_rotation = it->getHorizontalAngle();
+		it->setVerticalAngle(setVerticalRotation(position, horizontal_rotation+90));
 	}
 }
 
