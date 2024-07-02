@@ -118,7 +118,7 @@ void UEController::update()
 		//将坐标和旋转角度赋值给enemyVehicleList[i]
 		enemyVehicleList[i]->SetActorLocationAndRotation(location, rotator);
 		enemyVehicleList[i]->updateWidget();
-		enemyVehicleList[i]->setInfo(std::to_string(target.getLevel())+":"+round(target.getScore(),2));
+		enemyVehicleList[i]->setInfo(std::to_string(target.getLevel()+1)+":"+round(target.getScore(),2));
 	}
 }
 
