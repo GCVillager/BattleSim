@@ -25,8 +25,9 @@ Position Position::forwardXY(const double rotation,const double step) const {
 
 Position Position::forwardXY(const Position position ,const double rotation, const double step){
 	Position result = position;
-	result.x += cos(rotation) * step;
-	result.y += sin(rotation) * step;
+	double radian = utils::transformToRadian2PI(rotation);
+	result.x += cos(radian) * step;
+	result.y += sin(radian) * step;
 	return result;
 }
 

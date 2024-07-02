@@ -22,7 +22,7 @@ void TargetManager::setSideAngle() {
 		if (TargetList[i].getDeath())continue;
 		if (TargetList[i].getType() == PLANE) continue;
 		position = TargetList[i].getPosition();
-		horizontalAngle = unit->getHorizontalAngle();
+		horizontalAngle = TargetList[i].getHorizontalAngle();
 		TargetList[i].setSideAngle(setVerticalRotation(position, horizontalAngle));
 
 	}
@@ -39,7 +39,7 @@ void TargetManager::ready() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<double> dist(100, 400);
-	std::uniform_real_distribution<double> dist_velocity(3, 8);
+	std::uniform_real_distribution<double> dist_velocity(20, 25);
 	Position position(dist(gen), dist(gen));
 	this->unit = new OurUnit(position, dist_velocity(gen)); // 初始化我方单位类
 	std::uniform_real_distribution<double> dist_angle(0, 359);
@@ -51,10 +51,6 @@ void TargetManager::ready() {
 	// 初始化敌方类
 	initialTarget(100);
 	clusters.resize(K);
-	// 随机初始化K个聚类中心
-	for (int i = 0; i < K; i++)
-		for (double j : TargetList.at(rand() % TargetList.size()).weights)
-			clusters[i].push_back(j);
 
 	
 	correctPosition();
@@ -90,6 +86,20 @@ void TargetManager::loop(double dTime) {
 
 
 void TargetManager::runKMean() {
+	// 随机初始化K个聚类中心
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<double> dist__(0,500);
+	for (int i = 0; i < K; i++) {
+		clusters[i].push_back(dist__(gen));
+		clusters[i].push_back(dist__(gen));
+		clusters[i].push_back(dist__(gen));
+		clusters[i].push_back(dist__(gen));
+		clusters[i].push_back(dist__(gen));
+		clusters[i].push_back(dist__(gen));
+		clusters[i].push_back(dist__(gen));
+	}
+		
 
 	for (int iter = 0; iter < maxIters; ++iter) {
 
@@ -190,12 +200,13 @@ double TargetManager::setVerticalRotation(Position position, double horizontal_r
 
 
 	double z1 = utils::PerlinNoise2D(x,y); // 获取当前自己坐标的高度(km)
-	float z2 = 0;
-	double delta__ = 0.01;
-	bool tmp = false;
+	double z2 = 0;
+	double delta__ = 0.05;
+
 	Position tmp_p(x, y);
 	tmp_p=tmp_p.forwardXY(horizontal_rotation, delta__);
 	/*
+	bool tmp = false;
 	if (0 <= horizontal_rotation and horizontal_rotation <= 18.435 or horizontal_rotation >= 341.565 and horizontal_rotation <= 360) {
 		z2 = utils::PerlinNoise2D(x + delta__, y);
 	}
@@ -248,9 +259,8 @@ void TargetManager::setRotation() {
 		if (it->getType() == PLANE) continue; // 飞机不需要改变垂直方向
 		position = it->getPosition();
 		horizontal_rotation = it->getHorizontalAngle();
-		it->setVerticalAngle(setVerticalRotation(position, horizontal_rotation));
+		it->setVerticalAngle(setVerticalRotation(position, horizontal_rotation+90));
 	}
-
 }
 
 void TargetManager::correctPosition() {
@@ -295,7 +305,7 @@ void TargetManager::initialTarget(int quantity) {
 
 	std::uniform_int_distribution<int> dist_type(1, 3);
 	std::uniform_real_distribution<double> dist_pos(50, 450);
-	std::uniform_real_distribution<double> dist_velocity(0, 5);
+	std::uniform_real_distribution<double> dist_velocity(5, 15);
 	std::uniform_int_distribution<int> dist_status(1, 3);
 	std::uniform_real_distribution<double> dist_threat(0, 100);
 	std::uniform_real_distribution<double> dist_jamming(0, 100);
@@ -331,7 +341,7 @@ void TargetManager::initialTarget(int quantity) {
 
 		if (type == TYPE::PLANE) {
 			int tmp = dist_pos(gen);
-			position.z = tmp % 10 + 30;
+			position.z = tmp % 20 + 30;
 		}
 
 		velocity = (status == STATUS::FIGHT) ? dist_velocity(gen) : 0;
@@ -358,55 +368,55 @@ void TargetManager::checkTransgression() {
 		//std::cout << "我方越界了!" << std::endl;
 		Position position(0, 0, 0);
 		position = unit->getPosition();
-		bool horizontal_angle[2];
+		int horizontal_angle[2] = {0,0};
 		if (unit->getPosition().x >= 499) {
 
 			position.x = 498;
-			horizontal_angle[0] = false;
+			horizontal_angle[0] = 2;
 
 		}
 		else if (unit->getPosition().x <= 1) {
 			position.x = 2;
-			horizontal_angle[0] = true;
+			horizontal_angle[0] = 1;
 		}
 		if (unit->getPosition().y >= 499) {
 			position.y = 498;
-			horizontal_angle[1] = false;
+			horizontal_angle[1] = 2;
 		}
 		else if (unit->getPosition().y <= 1) {
 			position.y = 2;
-			horizontal_angle[1] = true;
+			horizontal_angle[1] = 1;
 		}
 
 		unit->setPosition(position); // 未设定z轴,z轴为0
 		std::random_device rd;
 		std::mt19937 gen(rd());
-		std::uniform_real_distribution<double> dist(0, 90);
+		std::uniform_real_distribution<double> dist(30, 150);
 		double horizontal_angle_result;
-		if (horizontal_angle[0] and horizontal_angle[1]) {
-			horizontal_angle_result = dist(gen);
+		if (horizontal_angle[1] == 1) {
+			horizontal_angle_result = dist(gen)-90;
 		}
-		else if (!horizontal_angle[0] and horizontal_angle[1]) {
-			horizontal_angle_result = dist(gen) + 90;
+		else if (horizontal_angle[0] == 2) {
+			horizontal_angle_result = dist(gen) + 90-90;
 		}
-		else if (!horizontal_angle[0] and !horizontal_angle[1]) {
-			horizontal_angle_result = dist(gen) + 180;
+		else if (horizontal_angle[1]==2) {
+			horizontal_angle_result = dist(gen) + 180-90;
 		}
-		else {
-			horizontal_angle_result = dist(gen) + 270;
+		else if(horizontal_angle[0]==1) {
+			horizontal_angle_result = dist(gen) + 270-90;
 		}
 
-		if (unit->getPosition().x > 490 and unit->getPosition().y > 490) {
-			horizontal_angle_result = dist(gen) + 180;
+		if (unit->getPosition().x > 400 and unit->getPosition().y > 400) {
+			horizontal_angle_result = dist(gen)/2 + 180-90;
 		}
-		else if (unit->getPosition().x > 490 and unit->getPosition().y < 10) {
-			horizontal_angle_result = dist(gen) + 90;
+		else if (unit->getPosition().x > 400 and unit->getPosition().y < 100) {
+			horizontal_angle_result = dist(gen)/2 + 90-90;
 		}
-		else if (unit->getPosition().x < 10 and unit->getPosition().y>490) {
-			horizontal_angle_result = dist(gen) + 270;
+		else if (unit->getPosition().x < 100 and unit->getPosition().y>400) {
+			horizontal_angle_result = dist(gen)/2 + 270-90;
 		}
-		else if (unit->getPosition().x < 10 and unit->getPosition().y < 10) {
-			horizontal_angle_result = dist(gen);
+		else if (unit->getPosition().x < 100 and unit->getPosition().y < 100) {
+			horizontal_angle_result = dist(gen)/2-90;
 		}
 		unit->setHorizontalAngle(horizontal_angle_result);
 

@@ -34,7 +34,7 @@ double OurUnit::getVelocity() {
 	return this->velocity;
 }
 double OurUnit::getVerticalAngle() {
-	return this->velocity;
+	return this->verticalAngle;
 }
 
 double OurUnit::getHorizontalAngle() {
