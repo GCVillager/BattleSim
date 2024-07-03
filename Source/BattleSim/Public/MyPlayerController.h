@@ -35,5 +35,7 @@ public:
     TSubclassOf<UUserWidget> HUDWidgetClass;
     UUserWidget* HUDWidget;
 
+    void changeTip(FString appendText);
+
     AMyPlayerController();
 };

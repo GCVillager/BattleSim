@@ -56,18 +56,10 @@ void AMyPlayerController::BeginPlay()
 	if (HUDWidgetClass)
 	{
 		HUDWidget = CreateWidget<UUserWidget>(GetWorld(), HUDWidgetClass);
-		//change text
-		FString text = TEXT("按下ESC以暂停游戏，可在此页面重新开始、继续或退出\n敌方单位头顶信息分别为威胁等级和威胁分数\nWASD移动，空格上升，CTRL下降\n按F以追踪我方单位,按G查看全局视图");
-		UTextBlock* textBlock = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("TextBlock_Tips"));
-		if (textBlock)
-		{
-			textBlock->SetText(FText::FromString(text));
-		}
-		
-		if (HUDWidget)
-		{
-			HUDWidget->AddToViewport();
-		}
+	}
+	if (HUDWidget)
+	{
+		HUDWidget->AddToViewport();
 	}
 }
 
@@ -119,4 +111,21 @@ void AMyPlayerController::OnGlobalPressed()
 	{
 		controller->SetControlRotation(FRotator(-90,0,0));
 	}
+}
+
+void AMyPlayerController::changeTip(FString appendText)
+{
+	static const FString defaultText = TEXT("按下ESC以暂停游戏，可在此页面重新开始、继续或退出\n敌方单位头顶信息分别为威胁等级和威胁分数\nWASD移动，空格上升，CTRL下降\n按F以追踪我方单位,按G查看全局视图");
+	//change text
+	FString text = defaultText + TEXT("\n聚类精确度:") + appendText;
+	if (HUDWidget)
+	{
+		UTextBlock* textBlock = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("TextBlock_Tips"));
+		if (textBlock)
+		{
+			textBlock->SetText(FText::FromString(text));
+		}
+	}
+
+	
 }

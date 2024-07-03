@@ -48,6 +48,8 @@ private:
 
 	double sideAngle; // 侧边角度,以玩家的右侧为基准,-90向下翻倒,,90向上翻倒,0°水平
 
+	int timeDeath;
+
 public:
 
 	int centerIndex; // 对应的聚类中心索引

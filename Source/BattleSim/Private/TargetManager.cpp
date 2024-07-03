@@ -140,14 +140,13 @@ void TargetManager::runKMean() {
 	if (K > target_count) {
 		int count_index = 0;
 		for (int i = 0; i < TargetList.size(); i++) {
-			if (TargetList[i].getDeath()) continue; // 已经死亡的不设置分数
-			TargetList[i].setLevel(count_index+1);
+			if (TargetList[i].getDeath() or TargetList[i].markedKilled) continue; // 已经死亡的不设置分数
+			TargetList[i].setLevel(count_index);
 			count_index++;
 		}
 		return;
 	}
 
-		
 		
 
 	for (int iter = 0; iter < maxIters; ++iter) {
@@ -239,12 +238,12 @@ void TargetManager::runKMean() {
 	}
 
 	for (int i = 0; i < TargetList.size(); i++) {
-		int index = TargetList[i].centerIndex;
+		int index = TargetList[i].centerIndex; // 对应的聚类索引
 		int j;
 		for (j = 0; j < prioritization.size(); j++) {
-			if (prioritization[j] == index)break;
+			if (prioritization[j] == index)break; // 如果发现优先级索引是聚类索引,跳出
 		}
-		TargetList[i].setLevel(j+1);
+		TargetList[i].setLevel(j);
 	}
 
 }

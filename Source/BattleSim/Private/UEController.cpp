@@ -52,6 +52,7 @@ void UEController::BeginPlay()
 
 void UEController::update()
 {
+
 	OurUnit* ourunit = targetManager->getUnit();
 	std::vector<Target> TargetList = targetManager->getTargetList();
 	std::sort(TargetList.begin(), TargetList.end(), [](Target a, Target b) {return a.getId() < b.getId(); });
@@ -118,9 +119,12 @@ void UEController::update()
 		//将坐标和旋转角度赋值给enemyVehicleList[i]
 		enemyVehicleList[i]->SetActorLocationAndRotation(location, rotator);
 		enemyVehicleList[i]->updateWidget();
-		enemyVehicleList[i]->setInfo(std::to_string(target.getLevel()+1)+":"+round(target.getScore(),2));
+		enemyVehicleList[i]->setInfo(std::to_string(target.getLevel() + 1) + ":" + round(target.getScore(), 2));
 	}
+	AMyPlayerController* playerController = Cast<AMyPlayerController>(world->GetFirstPlayerController());
+	playerController->changeTip(FString(round(targetManager->getAccuracy(),3).c_str()));
 }
+
 
 void UEController::Tick(float DeltaTime)
 {

@@ -6,7 +6,7 @@ void Target::setLevel(int level) {
 	this->level = level;
 }
 int Target::getLevel() {
-	return level;
+	return this->level;
 }
 
 
@@ -14,6 +14,11 @@ void Target::loop(double dTime) {
 	//this->calculateRotation();
 
 	if (this->markedDeath)return;
+	if (this->markedKilled) timeDeath+=dTime;
+	if (timeDeath > 3.1) {
+		this->markedDeath = true;
+		return;
+	}
 
 	if (this->status != STATUS::FIGHT) {
 		// 如果自己的状态不是战斗
@@ -138,6 +143,7 @@ Target::Target(int id, TYPE type, Position position, double velocity, STATUS sta
 	timeCount = 0;
 	markedKilled = false;
 	level = -1;
+	timeDeath = 0;
 }
 
 int Target::getId() const {

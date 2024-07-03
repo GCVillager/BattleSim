@@ -9,8 +9,10 @@
 #include "EnemyPlane.h"
 #include "TargetManager.h"
 #include "GenLandscape.h"
+#include "MyPlayerController.h"
 #include "Engine/World.h"
 #include "Bomb.h"
+#include <string>
 
 /**
  * @brief 用于控制游戏中的所有载具，并且与计算各个载具的状态的模块进行交互
