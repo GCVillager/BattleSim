@@ -25,40 +25,40 @@ void Target::loop(double dTime) {
 	// 计算各自对应的权重
 	// 根据种类判定
 	if (this->type == TYPE::PLANE) {
-		weights[0] = 3;
+		weights[0] = 30000;
 	}
 	else if (this->type == TYPE::TANK) {
-		weights[0] = 2;
+		weights[0] = 20000;
 	}
 	else {
-		weights[0] = 1;
+		weights[0] = 10000;
 	}
 	// 根据距离判定
 	double distance = this->position.distanceXY(unit->getPosition());
 	weights[1] = 710 - distance; //距离越近优先级越高
 	// 根据状态判定
 	if (this->status == FIGHT) {
-		weights[2] = 300;
+		weights[2] = 5000;
 	}
 	else if (this->status == STANDBY) {
-		weights[2] = 200;
+		weights[2] = 3000;
 	}
 	else {
-		weights[2] = 100;
+		weights[2] = 1000;
 	}
 	// 根据威胁距离判定
-	weights[3] = (threatDistance >= distance) ? 300 : 100;
+	weights[3] = (threatDistance >= distance) ? 100 : 0;
 	// 根据距离我方的方位判定
 	angleToOurUnit = unit->getPosition().getHorizontalAngle(this->position);
 	if (angleToOurUnit >= 45 and angleToOurUnit <= 135 or angleToOurUnit >= 225 and angleToOurUnit <= 315) {
-		weights[4] = 300;
+		weights[4] = 50;
 	}
 	else {
-		weights[4] = 100;
+		weights[4] = 0; 
 	}
 
-	weights[5] = (jammingStrength1 >= distance) ? 300 : 100;
-	weights[6] = (jammingStrength2 >= distance) ? 200 : 100;
+	weights[5] = (jammingStrength1 >= distance) ? 30 : 0;
+	weights[6] = (jammingStrength2 >= distance) ? 20 : 0;
 	double tmp_weights[7] = { 0 };
 	score = getWeightDifference(this->weights, tmp_weights);
 

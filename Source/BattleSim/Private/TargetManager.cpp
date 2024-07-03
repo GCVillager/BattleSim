@@ -67,9 +67,29 @@ void TargetManager::loop(double dTime) {
 	executeLoop(dTime);// 执行每个单位的循环(行进,计算各自的模)
 
 	checkTransgression(); // 检查每个元素是否越界,敌方越界清除,我方则重新设置角度和位置
-
-	runKMean(); // 执行KMean算法为每个元素分类
 	std::sort(TargetList.begin(), TargetList.end(), cmp); // 根据分数排序
+	runKMean(); // 执行KMean算法为每个元素分类
+	
+	int all_count = 0; // 存储目前还存活的目标
+	for (int i = 0; i < TargetList.size(); i++) {
+		if (TargetList[i].getDeath())continue;
+		all_count++;
+	}
+	if (all_count <= K) accuracy = 1; // 小于簇个数
+	else {
+		int target_level = 0; // 存储目前target对象所属的类别
+		int tmp_level = 0;
+		int err = 0;
+		for (int i = 0; i < TargetList.size(); i++) {
+			if (TargetList[i].getDeath())continue;
+			tmp_level = TargetList[i].getLevel();
+			if (tmp_level > target_level) target_level = tmp_level;
+			if (tmp_level < target_level) err++;
+		}
+		accuracy = 1.0 - (double)err / all_count;
+	}
+	
+	
 
 	if (unit->canKillTarget) {
 		if (TargetList.empty()) return;
@@ -83,32 +103,65 @@ void TargetManager::loop(double dTime) {
 	// test();
 }
 
+double TargetManager::getAccuracy() {
+	return accuracy;
 
+}
 
 void TargetManager::runKMean() {
-	// 随机初始化K个聚类中心
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<double> dist__(0,500);
-	for (int i = 0; i < K; i++) {
-		clusters[i].push_back(dist__(gen));
-		clusters[i].push_back(dist__(gen));
-		clusters[i].push_back(dist__(gen));
-		clusters[i].push_back(dist__(gen));
-		clusters[i].push_back(dist__(gen));
-		clusters[i].push_back(dist__(gen));
-		clusters[i].push_back(dist__(gen));
+	{
+		// 随机初始化K个聚类中心
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<double> dist_1(10000, 30000);
+		std::uniform_real_distribution<double> dist_2(1000, 5000);
+		std::uniform_real_distribution<double> dist_3( 0, 710);
+		std::uniform_real_distribution<double> dist_4(0, 100);
+		std::uniform_real_distribution<double> dist_5(0, 50);
+		std::uniform_real_distribution<double> dist_6(0, 20);
+		// 给每个属性随机赋值
+		for (int i = 0; i < K; i++) {
+			clusters[i].push_back(dist_1(gen));
+			clusters[i].push_back(dist_2(gen));
+			clusters[i].push_back(dist_3(gen));
+			clusters[i].push_back(dist_4(gen));
+			clusters[i].push_back(dist_5(gen));
+			clusters[i].push_back(dist_6(gen));
+			clusters[i].push_back(dist_6(gen));
+		}
 	}
+	int target_count = 0; // 存储目前还存活的目标
+	for (int i = 0; i < TargetList.size(); i++) {
+		if (TargetList[i].getDeath())continue;
+		target_count++;
+	}
+	if (target_count == 0) return; // 死光了
+
+	if (K > target_count) {
+		int count_index = 0;
+		for (int i = 0; i < TargetList.size(); i++) {
+			if (TargetList[i].getDeath()) continue; // 已经死亡的不设置分数
+			TargetList[i].setLevel(count_index+1);
+			count_index++;
+		}
+		return;
+	}
+
+		
 		
 
 	for (int iter = 0; iter < maxIters; ++iter) {
+		
+		std::vector<int> counts(K,0);
+		std::vector<std::vector<double>> new_centroids(K, { 0,0,0,0,0,0,0 });// 取平均值后的新聚类列表
 
-		std::vector<int> counts(K, 0); // 每个聚类内的目标个数
-		std::vector<std::vector<double>> new_centroids(K, { 0,0,0,0,0,0,0 }); // 取平均值后的新聚类列表
+		// 记录每个聚类内的目标个数,长度为K或仅剩的目标
+		
 
 		// 为每个目标分配最近的中心簇(存储索引)
 		for (auto it = TargetList.begin(); it < TargetList.end(); ++it) {
-			double min_dist = 1000000; // 最小距离
+			if (it->getDeath()) continue; // 已经死亡的不加入排序
+			double min_dist = 10000000; // 最小距离
 			int closest_centroid = -1; // 存储最近聚类的索引
 
 
@@ -128,7 +181,7 @@ void TargetManager::runKMean() {
 			counts.at(it->centerIndex)++; // 计数,一个簇内的目标个数
 			// 一个新簇,存储里面所有的权值和
 			for (int m = 0; m < 7; m++) {
-				new_centroids.at(it->centerIndex)[m] += it->weights[m];
+				new_centroids.at(it->centerIndex)[m] += it->weights[m]; // 加起来
 			}
 
 		}
@@ -143,8 +196,10 @@ void TargetManager::runKMean() {
 			}
 			else {
 				// 若一个簇内没有内容,随机分配一个
-				for (int i_ = 0; i_ < 7; i_++)
+				for (int i_ = 0; i_ < 7; i_++) {
+
 					new_centroids[i][i_] = TargetList.at(rand() % TargetList.size()).weights[i_];
+				}
 
 			}
 		}
@@ -153,6 +208,7 @@ void TargetManager::runKMean() {
 		bool converged = true;
 		for (int i = 0; i < K; ++i) {
 			if (Target::getWeightDifference(new_centroids[i].data(), clusters[i].data()) > 1e-4) {
+				// 一旦有一个新聚类中心与原来的聚类中心不相同,则继续排序
 				converged = false;
 				break;
 			}
@@ -188,12 +244,12 @@ void TargetManager::runKMean() {
 		for (j = 0; j < prioritization.size(); j++) {
 			if (prioritization[j] == index)break;
 		}
-		TargetList[i].setLevel(j);
+		TargetList[i].setLevel(j+1);
 	}
 
 }
-
 PRAGMA_DISABLE_OPTIMIZATION
+
 double TargetManager::setVerticalRotation(Position position, double horizontal_rotation) {
 	int x = position.x;
 	int y = position.y;

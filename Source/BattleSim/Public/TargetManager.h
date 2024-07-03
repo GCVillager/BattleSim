@@ -13,6 +13,7 @@ private:
 	double map[500][500];
 	OurUnit* unit;
 	std::vector<Target> TargetList;
+	double accuracy;
 
 
 public:
@@ -25,6 +26,9 @@ public:
 	std::vector<int> prioritization; // 由高到低的优先级存储各个聚类中心
 	double convergenceRadius; // 收敛半径
 	int maxIters; // 最大迭代次数
+	
+
+	double getAccuracy();
 
 	/*
 	* 当被加载时执行
